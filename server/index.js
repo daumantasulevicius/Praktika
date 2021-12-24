@@ -30,8 +30,8 @@ app.post('/connect', function(req, res){
 
 
     connectedUsers.push(user);
-    console.log(user);
-    res.end(JSON.stringify(connectedUsers));
+    console.log(connectedUsers);
+    res.end(JSON.stringify(user));
 })
 
 app.post('/try', function(req, res){
@@ -39,23 +39,31 @@ app.post('/try', function(req, res){
     var name = req.body.name;
     
     var user = connectedUsers.find(element => element.name == name);
-    var index = connectedUsers.findIndex(element => element.name == name);
     if(user){
         user.tries_left = user.tries_left - 1;
         user.tried_letters.push(letter);
         if(user.tries_left > 0){
             if(user.word.includes(letter)){
                 const indexes = [...user.word.matchAll(new RegExp(letter, "gi"))].map(a => a.index);
-                console.log(indexes);
+                //console.log(indexes);
+                for(var i = 0; i < indexes.length; i++){
+                    user.shown_word = user.shown_word.substr(0, indexes[i]) + letter + user.shown_word.substr(indexes[i] + 1);
+                }
+                res.end(JSON.stringify(user));
             }
         }
         else{
             res.end("No more tries left");
-        }
-        console.log(user);
+        }  
     }
+})
 
-    res.end(JSON.stringify(user));
+app.post('/disconnect', function(req, res){
+    var name = req.body.name;
+    var userIndex = connectedUsers.findIndex(element => element.name == name);
+    connectedUsers.splice(userIndex, 1);
+    console.log(connectedUsers);
+    res.end("Disconnected");
 })
 
 var server = app.listen(8081, function () {
