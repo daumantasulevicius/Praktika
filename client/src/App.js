@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Container, Grid, Box } from "@mui/material";
-import Game from "./components/Game";
+import React from "react";
+import { HashRouter, Routes, Route } from "react-router-dom";
+//import Game from "./components/Game";
+import ConnectPage from "./views/ConnectPage";
 
 const App = () => {
-  const [inputValues, setInputValues] = useState({
-    test: 0,
-  });
-
   return (
-    <div>
-      <Game 
-        inputValues={inputValues}
-        setInputValues={setInputValues}
-        />
-    </div>
+    <HashRouter basename="/">
+      <div className="App">
+        <div className="App-body">
+          <Routes>
+            <Route path="/" element={<ConnectPage />} />
+          </Routes>
+        </div>
+      </div>
+    </HashRouter>
   );
 };
 
