@@ -21,7 +21,7 @@ const GamePage = () => {
   return (
     <div>
       <Grid>
-        <Box py={2}>
+        <Box px={2} py={2}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Game

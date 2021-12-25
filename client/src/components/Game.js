@@ -9,6 +9,8 @@ import {
   Modal,
   Box
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import PageImage from "../images/rawpixel.jpg"
 
 const style = {
   position: 'absolute',
@@ -22,13 +24,21 @@ const style = {
   p: 4,
 };
 
-const Game = ({ inputValues, setInputValues }) => {
+const paperBlock ={
+  backgroundImage: `url(${PageImage})`,
+  backgroundSize: `cover`,
+  backgroundPosition: `center`,
+};
 
+const Game = ({ inputValues, setInputValues }) => {
+  const navigate = useNavigate();
   const [showWinModal, setWinModal] = React.useState(false);
   const [showFailModal, setFailModal] = React.useState(false);
+  const [letter, setLetter] = React.useState("");
 
   const handleInputChange = (e, field) => {
     const input = e.target.value;
+    setLetter(input);
     setInputValues((prev) => ({ ...prev, [field]: input }));
   };
 
@@ -52,6 +62,7 @@ const Game = ({ inputValues, setInputValues }) => {
       console.log(error);
     });
     console.log(`Post to api with name ${inputValues.name} and letter ${inputValues.letter}`);
+    setLetter("");
   };
 
   function restartAPI(){
@@ -74,6 +85,17 @@ const Game = ({ inputValues, setInputValues }) => {
       console.log(`Post to api with name ${inputValues.name}`);
   };
 
+  function disconnectAPI(){
+    axios.post('http://localhost:8081/disconnect', {name : inputValues.name})
+    .then(function (response) {
+      navigate('/');
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    console.log(`Post to api with name ${inputValues.name}`);
+  };
+
   return (
     <Grid>
 
@@ -89,6 +111,7 @@ const Game = ({ inputValues, setInputValues }) => {
             The word was {inputValues.word}
           </Typography>
           <Button 
+            sx={{mt: 2}}
             variant = "contained"
             onClick={() => restartAPI()}
             >
@@ -117,25 +140,32 @@ const Game = ({ inputValues, setInputValues }) => {
       </Modal>
     </div>
 
-      <Paper>
+      <Paper sx={{py: 2}} style={paperBlock}>
 
-        <Paper sx={{ width: 300, ml: 5, my: 5}}>
-          <Typography>
+        <Paper sx={{ width: 300, ml: 5, px: 2}}>
+          <Typography sx={{py: 1}}>
             Connected as user: {inputValues.name}
           </Typography>
+          <Button 
+            sx={{my: 1}}
+            variant = "contained"
+            color="warning"
+            onClick={() => disconnectAPI()}
+            >
+            Disconnect
+          </Button>
         </Paper>
 
         <Paper variant="outlined" sx={{ width: 300, ml: 75}}>
           <img src={require(`../images/${inputValues.triesLeft}.png`)} alt="imageOfHangman" width={300} height={300}/>
+          <Typography
+            variant="h6"
+            sx={{ letterSpacing: 6, px: 13}}>
+            {inputValues.word}
+          </Typography>
         </Paper>
 
-        <Grid item sm={16} sx={{ml: 90}}>
-          <Typography
-          variant="h6"
-          sx={{ letterSpacing: 6}}>
-          {inputValues.word}
-          </Typography>
-        </Grid>
+        
 
         <Grid sx={{ flexGrow: 1, py: 5, px: 50}} container spacing={2}>
           <Grid item xs={12}>
@@ -147,7 +177,8 @@ const Game = ({ inputValues, setInputValues }) => {
                     
                     <Grid item sm={16} sx={{ paddingTop: 2 }}>
                       <TextField 
-                        label="Letter" 
+                        label="Letter"
+                        value={letter}
                         variant="outlined" 
                         onChange={(e) => handleInputChange(e, "letter")}
                         helperText="Enter a letter"
@@ -170,10 +201,11 @@ const Game = ({ inputValues, setInputValues }) => {
               <Grid sx={{px:2}}>
                 <Paper sx={{ height: 180, width: 300 }}>
                   <Typography
-                    sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                    sx={{ fontSize: 14, px: 2, py: 1}} color="text.secondary" gutterBottom>
                     Tried letters
                   </Typography>
-                  <Typography>
+                  <Typography
+                    sx={{ fontSize: 14, px: 2}}>
                     {inputValues.triedLetters}
                   </Typography>
                 </Paper>
