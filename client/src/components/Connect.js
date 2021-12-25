@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import axios from "axios";
 import {
   Paper,
@@ -7,9 +7,11 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Connect = ({ inputValues, setInputValues }) => {
 
+    const navigate = useNavigate();
     const handleInputChange = (e, field) => {
       const input = e.target.value;
       setInputValues((prev) => ({ ...prev, [field]: input }));
@@ -18,7 +20,8 @@ const Connect = ({ inputValues, setInputValues }) => {
     function connectAPI(){
       axios.post('http://localhost:8081/connect', {name : inputValues.name})
       .then(function (response) {
-        console.log(response);
+        const shownWordVar = response.data.shown_word;
+        navigate('/game', {state:{nameUser: inputValues.name, shownWord: shownWordVar}});
       })
       .catch(function (error) {
         console.log(error);
@@ -40,12 +43,12 @@ return (
             />
           </Grid>
           <Grid item sm={16} sx={{ paddingTop: 2 }}>
-            <Button 
-              variant = "contained"
-              onClick={() => connectAPI()}
-            >
-              Connect
-            </Button>
+              <Button 
+                variant = "contained"
+                onClick={() => connectAPI()}
+              >
+                Connect
+              </Button>
           </Grid>
 
         </Box> 

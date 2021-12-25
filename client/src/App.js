@@ -1,19 +1,20 @@
 import React from "react";
-import { HashRouter, Routes, Route } from "react-router-dom";
-//import Game from "./components/Game";
+import { BrowserRouter, Routes, Route, Router } from "react-router-dom";
+import GamePage from "./views/GamePage";
 import ConnectPage from "./views/ConnectPage";
 
 const App = () => {
   return (
-    <HashRouter basename="/">
+    <BrowserRouter  basename="/">
       <div className="App">
         <div className="App-body">
           <Routes>
             <Route path="/" element={<ConnectPage />} />
+            <Route path="/game" element={<GamePage />}/>
           </Routes>
         </div>
       </div>
-    </HashRouter>
+    </BrowserRouter >
   );
 };
 
