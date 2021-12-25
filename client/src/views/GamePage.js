@@ -8,11 +8,13 @@ const GamePage = () => {
     const location = useLocation();
     const { nameUser } = location.state;
     const { shownWord } = location.state;
-    console.log(location);
+    const { trueWord } = location.state;
+    console.log(trueWord);
     const [inputValues, setInputValues] = useState({
         name: nameUser,
-        triesLeft: 0,
+        triesLeft: 10,
         word: shownWord,
+        trueWord: trueWord,
         triedLetters: [],
       });
 

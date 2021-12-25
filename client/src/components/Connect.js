@@ -21,7 +21,8 @@ const Connect = ({ inputValues, setInputValues }) => {
       axios.post('http://localhost:8081/connect', {name : inputValues.name})
       .then(function (response) {
         const shownWordVar = response.data.shown_word;
-        navigate('/game', {state:{nameUser: inputValues.name, shownWord: shownWordVar}});
+        const trueWord = response.data.word;
+        navigate('/game', {state:{nameUser: inputValues.name, shownWord: shownWordVar, trueWord: trueWord}});
       })
       .catch(function (error) {
         console.log(error);

@@ -25,7 +25,8 @@ app.post('/connect', function(req, res){
             "tries_left" : 10,
             "word" : randWord,
             "shown_word" : randWord.replace(/\D/g, "_"),
-            "tried_letters" : []
+            "tried_letters" : [],
+            "letters_left" : randWord.length
         } 
 
 
@@ -41,22 +42,39 @@ app.post('/try', function(req, res){
     var user = connectedUsers.find(element => element.name == name);
     if(user){
         if(user.tries_left > 0){
-            user.tries_left = user.tries_left - 1;
-            user.tried_letters.push(letter);
-            if(user.word.includes(letter)){
-                const indexes = [...user.word.matchAll(new RegExp(letter, "gi"))].map(a => a.index);
-                //console.log(indexes);
-                for(var i = 0; i < indexes.length; i++){
-                    user.shown_word = user.shown_word.substr(0, indexes[i]) + letter + user.shown_word.substr(indexes[i] + 1);
+            if(!user.tried_letters.includes(letter)){
+                user.tries_left = user.tries_left - 1;
+                user.tried_letters.push(letter);
+                if(user.word.includes(letter)){
+                    const indexes = [...user.word.matchAll(new RegExp(letter, "gi"))].map(a => a.index);
+                    user.letters_left = user.letters_left - indexes.length;
+                    //console.log(indexes);
+                    for(var i = 0; i < indexes.length; i++){
+                        user.shown_word = user.shown_word.substr(0, indexes[i]) + letter + user.shown_word.substr(indexes[i] + 1);
+                    }
                 }
+                res.end(JSON.stringify(user));
             }
-            res.end(JSON.stringify(user));
         }
         else{
             res.end("No more tries left");
         }
         console.log(user);  
     }
+})
+
+app.post('/restart', function(req, res){
+    var name = req.body.name;
+    var user = connectedUsers.find(element => element.name == name);
+    if (user){
+        var randWord = words[Math.floor(Math.random()*words.length)];
+        user.word = randWord;
+        user.shown_word = randWord.replace(/\D/g, "_");
+        user.tries_left = 10;
+        user.tried_letters = [];
+        user.letters_left = randWord.length;
+    }
+    res.end(JSON.stringify(user));
 })
 
 app.post('/disconnect', function(req, res){
