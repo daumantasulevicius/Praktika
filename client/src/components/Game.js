@@ -24,6 +24,12 @@ const style = {
   p: 4,
 };
 
+
+const typograph = {
+  flexGrow: 1,
+  textAlign: "center",
+};
+
 const paperBlock ={
   backgroundImage: `url(${PageImage})`,
   backgroundSize: `cover`,
@@ -36,10 +42,27 @@ const Game = ({ inputValues, setInputValues }) => {
   const [showFailModal, setFailModal] = React.useState(false);
   const [letter, setLetter] = React.useState("");
 
+  const[letterError, setLetterError] = React.useState(false);
+  const[letterHelper, setLetterHelper] = React.useState("Enter a single letter");
+
+  const isValidLetter = (str) => {
+    return /^[A-Za-z]{0,1}$/.test(str);
+  };
+
   const handleInputChange = (e, field) => {
     const input = e.target.value;
-    setLetter(input);
-    setInputValues((prev) => ({ ...prev, [field]: input }));
+
+    if(!isValidLetter(input)){
+      setLetterError(true);
+      setLetterHelper("Please enter only a single letter");
+    }
+    else{
+      setLetterError(false);
+      setLetterHelper("Enter a single letter");
+      setLetter(input);
+      setInputValues((prev) => ({ ...prev, [field]: input }));
+    }
+    
   };
 
   const onUnload = () => {
@@ -169,7 +192,8 @@ const Game = ({ inputValues, setInputValues }) => {
           <img src={require(`../images/${inputValues.triesLeft}.png`)} alt="imageOfHangman" width={300} height={300}/>
           <Typography
             variant="h6"
-            sx={{ letterSpacing: 6, px: 13}}>
+            style={typograph}
+            sx={{ letterSpacing: 6}}>
             {inputValues.word}
           </Typography>
         </Paper>
@@ -188,9 +212,10 @@ const Game = ({ inputValues, setInputValues }) => {
                       <TextField 
                         label="Letter"
                         value={letter}
+                        error={letterError}
                         variant="outlined" 
                         onChange={(e) => handleInputChange(e, "letter")}
-                        helperText="Enter a letter"
+                        helperText={letterHelper}
                         required
                         fullWidth
                       />

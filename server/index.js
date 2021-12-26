@@ -16,7 +16,7 @@ app.use(cors({
 }));
 
 var connectedUsers = [];
-var words = ["dangus", "zeme", "ugnis", "vanduo", "oras", "kompiuteris"]
+var words = ["dangus", "zeme", "ugnis", "vanduo", "oras","telefonas", "variklis", "klaviatura", "ekranas"];
 
 app.post('/connect', function(req, res){
     var randWord = words[Math.floor(Math.random()*words.length)];
