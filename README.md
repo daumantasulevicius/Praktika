@@ -1,4 +1,4 @@
-# Praktika
+# Hangman
 To run the server you have to navigate to the server folder and run the index.js file with node
 ```
 cd ./server
