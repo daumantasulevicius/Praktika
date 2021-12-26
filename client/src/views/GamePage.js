@@ -6,11 +6,13 @@ import Game from "../components/Game";
 
 const GamePage = () => {
     const location = useLocation();
+    const { userID } = location.state;
     const { nameUser } = location.state;
     const { shownWord } = location.state;
     const { trueWord } = location.state;
     console.log(trueWord);
     const [inputValues, setInputValues] = useState({
+        userID : userID,
         name: nameUser,
         triesLeft: 10,
         word: shownWord,

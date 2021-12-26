@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Container, Grid, Box } from "@mui/material";
+import React, { useState } from "react";
+import { Grid, Box } from "@mui/material";
 
 import Connect from "../components/Connect";
 
 const ConnectPage = () => {
     const [inputValues, setInputValues] = useState({
-        name: "Empty"
+        name: "Empty",
+        id : 0,
       });
 
   return (

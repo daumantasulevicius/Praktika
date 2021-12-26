@@ -21,6 +21,7 @@ var words = ["dangus", "zeme", "ugnis", "vanduo", "oras", "kompiuteris"]
 app.post('/connect', function(req, res){
     var randWord = words[Math.floor(Math.random()*words.length)];
     var user = {
+            "id" : connectedUsers.length,
             "name" : req.body.name,
             "tries_left" : 10,
             "word" : randWord,
@@ -37,9 +38,9 @@ app.post('/connect', function(req, res){
 
 app.post('/try', function(req, res){
     var letter = req.body.letter;
-    var name = req.body.name;
+    var id = req.body.id;
     
-    var user = connectedUsers.find(element => element.name == name);
+    var user = connectedUsers.find(element => element.id === id);
     if(user){
         if(user.tries_left > 0){
             if(!user.tried_letters.includes(letter)){
@@ -64,8 +65,8 @@ app.post('/try', function(req, res){
 })
 
 app.post('/restart', function(req, res){
-    var name = req.body.name;
-    var user = connectedUsers.find(element => element.name == name);
+    var id = req.body.id;
+    var user = connectedUsers.find(element => element.id === id);
     if (user){
         var randWord = words[Math.floor(Math.random()*words.length)];
         user.word = randWord;
@@ -78,8 +79,8 @@ app.post('/restart', function(req, res){
 })
 
 app.post('/disconnect', function(req, res){
-    var name = req.body.name;
-    var userIndex = connectedUsers.findIndex(element => element.name == name);
+    var id = req.body.id;
+    var userIndex = connectedUsers.findIndex(element => element.id === id);
     connectedUsers.splice(userIndex, 1);
     console.log(connectedUsers);
     res.end("Disconnected");

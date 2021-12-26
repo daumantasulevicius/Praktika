@@ -22,7 +22,9 @@ const Connect = ({ inputValues, setInputValues }) => {
       .then(function (response) {
         const shownWordVar = response.data.shown_word;
         const trueWord = response.data.word;
-        navigate('/game', {state:{nameUser: inputValues.name, shownWord: shownWordVar, trueWord: trueWord}});
+        const userID = response.data.id;
+        setInputValues((prev) => ({ ...prev, "id":  userID}));
+        navigate('/game', {state:{nameUser: inputValues.name, userID: userID, shownWord: shownWordVar, trueWord: trueWord}});
       })
       .catch(function (error) {
         console.log(error);

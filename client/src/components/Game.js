@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import {
   Paper,
@@ -42,8 +42,19 @@ const Game = ({ inputValues, setInputValues }) => {
     setInputValues((prev) => ({ ...prev, [field]: input }));
   };
 
+  const onUnload = () => {
+    disconnectAPI();
+  };
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", onUnload);
+    return () => {
+      window.removeEventListener('beforeunload', onUnload)
+    }
+  });
+
   function tryLetterAPI(){
-    axios.post('http://localhost:8081/try', {name : inputValues.name, letter : inputValues.letter})
+    axios.post('http://localhost:8081/try', {id : inputValues.userID, letter : inputValues.letter})
     .then(function (response) {
       const shownWordVar = response.data.shown_word;
       const [...triedLetters] = response.data.tried_letters;
@@ -66,13 +77,11 @@ const Game = ({ inputValues, setInputValues }) => {
   };
 
   function restartAPI(){
-    axios.post('http://localhost:8081/restart', {name : inputValues.name})
+    axios.post('http://localhost:8081/restart', {id : inputValues.userID})
       .then(function (response) {
         const shownWordVar = response.data.shown_word;
         const [...triedLetters] = response.data.tried_letters;
         const triesLeft = response.data.tries_left;
-        const lettersLeft = response.data.letters_left;
-        //console.log(triedLetters);
         setInputValues((prev) => ({ ...prev, "word": shownWordVar }));
         setInputValues((prev) => ({ ...prev, "triedLetters": triedLetters }));
         setInputValues((prev) => ({ ...prev, "triesLeft": triesLeft }));
@@ -86,7 +95,7 @@ const Game = ({ inputValues, setInputValues }) => {
   };
 
   function disconnectAPI(){
-    axios.post('http://localhost:8081/disconnect', {name : inputValues.name})
+    axios.post('http://localhost:8081/disconnect', {id : inputValues.userID})
     .then(function (response) {
       navigate('/');
     })
