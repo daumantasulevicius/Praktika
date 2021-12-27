@@ -34,7 +34,9 @@ const paperBlock ={
   backgroundImage: `url(${PageImage})`,
   backgroundSize: `cover`,
   backgroundPosition: `center`,
+  height: '100%'
 };
+
 
 const Game = ({ inputValues, setInputValues }) => {
   const navigate = useNavigate();
@@ -83,7 +85,6 @@ const Game = ({ inputValues, setInputValues }) => {
       const [...triedLetters] = response.data.tried_letters;
       const triesLeft = response.data.tries_left;
       const lettersLeft = response.data.letters_left;
-      //console.log(triedLetters);
       setInputValues((prev) => ({ ...prev, "word": shownWordVar }));
       setInputValues((prev) => ({ ...prev, "triedLetters": triedLetters }));
       setInputValues((prev) => ({ ...prev, "triesLeft": triesLeft }));
@@ -95,7 +96,6 @@ const Game = ({ inputValues, setInputValues }) => {
     .catch(function (error) {
       console.log(error);
     });
-    console.log(`Post to api with name ${inputValues.name} and letter ${inputValues.letter}`);
     setLetter("");
   };
 
@@ -114,7 +114,6 @@ const Game = ({ inputValues, setInputValues }) => {
       .catch(function (error) {
         console.log(error);
       });
-      console.log(`Post to api with name ${inputValues.name}`);
   };
 
   function disconnectAPI(){
@@ -125,13 +124,13 @@ const Game = ({ inputValues, setInputValues }) => {
     .catch(function (error) {
       console.log(error);
     });
-    console.log(`Post to api with name ${inputValues.name}`);
   };
 
   return (
-    <Grid>
+    <Grid style={{ height: "92vh" }}>
 
     <div>
+      {/* Modal for win condition */}
       <Modal
         open={showWinModal}
         >
@@ -152,6 +151,7 @@ const Game = ({ inputValues, setInputValues }) => {
         </Box>
       </Modal>
 
+      {/* Modal for fail condition */}
       <Modal
         open={showFailModal}
         >
@@ -162,7 +162,8 @@ const Game = ({ inputValues, setInputValues }) => {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             The word was {inputValues.trueWord}
           </Typography>
-          <Button 
+          <Button
+            sx={{mt: 2}}
             variant = "contained"
             onClick={() => restartAPI()}
             >
@@ -173,8 +174,8 @@ const Game = ({ inputValues, setInputValues }) => {
     </div>
 
       <Paper sx={{py: 2}} style={paperBlock}>
-
-        <Paper sx={{ width: 300, ml: 5, px: 2}}>
+        {/* Paper to display player name */}
+        <Paper sx={{ width: 300, ml: 5, px: 2}} elevation="6">
           <Typography sx={{py: 1}}>
             Connected as user: {inputValues.name}
           </Typography>
@@ -187,9 +188,12 @@ const Game = ({ inputValues, setInputValues }) => {
             Disconnect
           </Button>
         </Paper>
-
-        <Paper variant="outlined" sx={{ width: 300, ml: 75}}>
+      
+      <div style={{display: 'flex',  justifyContent:'center', alignItems:'center'}}>
+        <Paper sx={{ width: 300}} elevation="6">
+          {/* Image to show how many tries are left as a hangman figure */}
           <img src={require(`../images/${inputValues.triesLeft}.png`)} alt="imageOfHangman" width={300} height={300}/>
+          {/* Typography element to show the word with correctly guessed letters */}
           <Typography
             variant="h6"
             style={typograph}
@@ -197,18 +201,18 @@ const Game = ({ inputValues, setInputValues }) => {
             {inputValues.word}
           </Typography>
         </Paper>
-
-        
-
+      </div>
+    
         <Grid sx={{ flexGrow: 1, py: 5, px: 50}} container spacing={2}>
           <Grid item xs={12}>
             <Grid container justifyContent="center">
 
               <Grid sx={{ px: 2 }}>
-                <Paper sx={{ height: 180, width: 300 }}>
+                <Paper sx={{ height: 180, width: 300, my: 1 }} elevation="6">
                   <Grid sx={{ px: 2 }}>
                     
                     <Grid item sm={16} sx={{ paddingTop: 2 }}>
+                      {/* Text field to input a letter to guess */}
                       <TextField 
                         label="Letter"
                         value={letter}
@@ -233,13 +237,14 @@ const Game = ({ inputValues, setInputValues }) => {
               </Grid>
 
               <Grid sx={{px:2}}>
-                <Paper sx={{ height: 180, width: 300 }}>
+                {/* Paper to show tried letters (correct and incorrect) */}
+                <Paper sx={{ height: 180, width: 300, my: 1 }} elevation="6">
                   <Typography
                     sx={{ fontSize: 14, px: 2, py: 1}} color="text.secondary" gutterBottom>
                     Tried letters
                   </Typography>
                   <Typography
-                    sx={{ fontSize: 14, px: 2}}>
+                    sx={{ px: 2, letterSpacing: 8}} variant="h4" >
                     {inputValues.triedLetters}
                   </Typography>
                 </Paper>
@@ -248,7 +253,7 @@ const Game = ({ inputValues, setInputValues }) => {
             </Grid>
           </Grid>
         </Grid>
-
+        
       </Paper>
     </Grid>
     );

@@ -29,7 +29,6 @@ const Connect = ({ inputValues, setInputValues }) => {
       .catch(function (error) {
         console.log(error);
       });
-      console.log(`Post to api with name ${inputValues.name}`);
     };
 
 return (
