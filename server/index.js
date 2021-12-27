@@ -16,74 +16,80 @@ app.use(cors({
 }));
 
 var connectedUsers = [];
-var words = ["dangus", "zeme", "ugnis", "vanduo", "oras","telefonas", "variklis", "klaviatura", "ekranas"];
+// Array of random words
+var words = ["sky", "earth", "fire", "water", "wind","telephone",
+             "engine", "keyboard", "screen", "snow", "react", "script",
+            "intern", "job", "experience"];
 
+// Endpoint for user to connect to server
 app.post('/connect', function(req, res){
-    var randWord = words[Math.floor(Math.random()*words.length)];
+    var randWord = words[Math.floor(Math.random()*words.length)]; // Gets random word from word array
     var user = {
             "id" : connectedUsers.length,
             "name" : req.body.name,
             "tries_left" : 10,
             "word" : randWord,
-            "shown_word" : randWord.replace(/\D/g, "_"),
+            "shown_word" : randWord.replace(/\D/g, "_"),    // Replaces the letters in word with underscores
             "tried_letters" : [],
             "letters_left" : randWord.length
         } 
 
 
-    connectedUsers.push(user);
+    connectedUsers.push(user); // Adds user to connected user array
     console.log(connectedUsers);
-    res.end(JSON.stringify(user));
+    res.end(JSON.stringify(user)); // Sends data about connected user
 })
 
+// Endpoint for user to try to guess a letter
 app.post('/try', function(req, res){
-    var letter = req.body.letter;
+    var letter = req.body.letter.toLowerCase();
     var id = req.body.id;
     
-    var user = connectedUsers.find(element => element.id === id);
-    if(user){
-        if(user.tries_left > 0){
-            if(!user.tried_letters.includes(letter)){
-                user.tries_left = user.tries_left - 1;
-                user.tried_letters.push(letter);
-                if(user.word.includes(letter)){
-                    const indexes = [...user.word.matchAll(new RegExp(letter, "gi"))].map(a => a.index);
-                    user.letters_left = user.letters_left - indexes.length;
-                    //console.log(indexes);
+    var user = connectedUsers.find(element => element.id === id); // Find the user object in array with corresponding id
+    if(user){                                                     // Check if user exists
+        if(user.tries_left > 0){                                  // Check if user has not used 10 of his tries
+            if(!user.tried_letters.includes(letter)){             // Check if user has already guessed this letter
+                user.tries_left = user.tries_left - 1;            // Decrement tries user has left
+                user.tried_letters.push(letter);                  // Add the tried letter to the tried letter array
+                if(user.word.includes(letter)){                   // Check if user's word contains the tried letter
+                    const indexes = [...user.word.matchAll(new RegExp(letter, "gi"))].map(a => a.index);    // Find indexes of the guessed letter in the word
+                    user.letters_left = user.letters_left - indexes.length;     // Decrement how many letters the user has left to guess
                     for(var i = 0; i < indexes.length; i++){
-                        user.shown_word = user.shown_word.substr(0, indexes[i]) + letter + user.shown_word.substr(indexes[i] + 1);
+                        user.shown_word = user.shown_word.substr(0, indexes[i]) + letter + user.shown_word.substr(indexes[i] + 1); // Show the correctly guessed letter in the word
                     }
                 }
-                res.end(JSON.stringify(user));
+                res.end(JSON.stringify(user));  // Sends data about the user
             }
         }
-        else{
-            res.end("No more tries left");
+        else{                               // If user has no more tries left
+            res.end("No more tries left");  // Send text message to user
         }
         console.log(user);  
     }
 })
 
+// Endpoint for user to get a new word
 app.post('/restart', function(req, res){
     var id = req.body.id;
-    var user = connectedUsers.find(element => element.id === id);
+    var user = connectedUsers.find(element => element.id === id); // Find the user object in array with corresponding id
     if (user){
-        var randWord = words[Math.floor(Math.random()*words.length)];
+        var randWord = words[Math.floor(Math.random()*words.length)]; // Get a new word from the word array
         user.word = randWord;
-        user.shown_word = randWord.replace(/\D/g, "_");
+        user.shown_word = randWord.replace(/\D/g, "_"); // Replaces the letters in word with underscores
         user.tries_left = 10;
         user.tried_letters = [];
         user.letters_left = randWord.length;
     }
-    res.end(JSON.stringify(user));
+    res.end(JSON.stringify(user));  // Sends data about the user
 })
 
+// Endpoint for user to disconnect from server and delete it's object
 app.post('/disconnect', function(req, res){
     var id = req.body.id;
-    var userIndex = connectedUsers.findIndex(element => element.id === id);
-    connectedUsers.splice(userIndex, 1);
+    var userIndex = connectedUsers.findIndex(element => element.id === id); // Find the user object index in array with corresponding id
+    connectedUsers.splice(userIndex, 1);    // Remove the user object from the connected user array
     console.log(connectedUsers);
-    res.end("Disconnected");
+    res.end("Disconnected");    // Sends text message about disconnection
 })
 
 var server = app.listen(8081, function () {
