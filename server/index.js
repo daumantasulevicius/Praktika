@@ -15,6 +15,7 @@ app.use(cors({
     origin: '*'
 }));
 
+var newID = 0;
 var connectedUsers = [];
 // Array of random words
 var words = ["sky", "earth", "fire", "water", "wind","telephone",
@@ -25,7 +26,7 @@ var words = ["sky", "earth", "fire", "water", "wind","telephone",
 app.post('/connect', function(req, res){
     var randWord = words[Math.floor(Math.random()*words.length)]; // Gets random word from word array
     var user = {
-            "id" : connectedUsers.length,
+            "id" : newID,
             "name" : req.body.name,
             "tries_left" : 10,
             "word" : randWord,
@@ -34,7 +35,7 @@ app.post('/connect', function(req, res){
             "letters_left" : randWord.length
         } 
 
-
+    newID = newID + 1;
     connectedUsers.push(user); // Adds user to connected user array
     console.log(connectedUsers);
     res.end(JSON.stringify(user)); // Sends data about connected user
